@@ -35,8 +35,8 @@ const checkForCache = async (url: string): Promise<APIOutput | null> => {
 
 const createCache = async (data: CacheRecord): Promise<boolean> => {
   try {
-    await supabase.from('meta-cache').insert(data);
-
+    let  {error} = await supabase.from('meta-cache').insert(data);
+    console.log(error);
     return true;
   } catch (error) {
     console.log(error);
