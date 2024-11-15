@@ -87,7 +87,7 @@ app.get('/v2', async (req, res) => {
       let image = og.image
         ? og.image
         : images.length > 0
-        ? images[0].url
+        ? images[0].src
         : `${SERVER_URL}/img-placeholder.jpg`;
       const description = og.description
         ? og.description
