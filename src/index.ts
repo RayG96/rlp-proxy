@@ -110,7 +110,7 @@ app.get('/v2', async (req, res) => {
       console.log(output);
       if (!cached && output) {
         await createCache({
-          url,
+          url: url,
           title: output.title,
           description: output.description,
           image: output.image,
