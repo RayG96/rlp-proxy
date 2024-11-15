@@ -5,7 +5,7 @@ import { APIOutput } from '../types';
 const SUPABASE_URL = 'https://bulawodlksxswvelfogh.supabase.co';
 
 const supabase = createClient(SUPABASE_URL, process.env.SUPABASE_KEY!);
-console.log(process.env.SUPABASE_KEY);
+
 interface CacheRecord extends APIOutput {
   url: string;
 }
@@ -35,8 +35,8 @@ const checkForCache = async (url: string): Promise<APIOutput | null> => {
 
 const createCache = async (data: CacheRecord): Promise<boolean> => {
   try {
-    const { error } = await supabase.from('meta-cache').insert(data);
-    console.log(error);
+    await supabase.from('meta-cache').insert(data);
+
     return true;
   } catch (error) {
     console.log(error);
