@@ -106,7 +106,7 @@ app.get('/v2', async (req, res) => {
       let image = og.image
         ? og.image
         : images.length > 0
-        ? images[0].src
+        ? images[0].url
         : null;
       const description = og.description
         ? og.description
