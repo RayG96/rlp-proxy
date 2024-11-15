@@ -70,7 +70,7 @@ app.get('/v2', async (req, res) => {
 
       // optional - you'll need a supabase key if you want caching. highly recommended.
       const cached = await checkForCache(url);
-      console.log(url);
+
       if (cached) {
         return res
           .set('Access-Control-Allow-Origin', '*')
@@ -106,8 +106,7 @@ app.get('/v2', async (req, res) => {
       };
 
       sendResponse(res, output);
-      console.log("Cached: " + cached);
-      console.log(output);
+
       if (!cached && output) {
         await createCache({
           url: url,
