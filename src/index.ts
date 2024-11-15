@@ -106,7 +106,8 @@ app.get('/v2', async (req, res) => {
       };
 
       sendResponse(res, output);
-
+      console.log("Cached: " + cached);
+      console.log("Output: " + output);
       if (!cached && output) {
         await createCache({
           url,
