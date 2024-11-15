@@ -2,54 +2,12 @@ require('dotenv').config();
 import express, { Response } from 'express';
 import { getMetadata } from './lib';
 import { APIOutput } from './types';
-import { createClient } from '@supabase/supabase-js';
+import { checkForCache, createCache } from './lib/cache';
 
 const app = express();
 
-const SUPABASE_URL = 'https://bulawodlksxswvelfogh.supabase.co';
-
-const supabase = createClient(SUPABASE_URL, process.env.SUPABASE_KEY);
-
 const port = Number(process.env.PORT || 8080);
 const SERVER_URL = process.env.SERVER_URL;
-
-interface CacheRecord extends APIOutput {
-  url: string;
-}
-
-const checkForCache = async (url: string): Promise<APIOutput | null> => {
-  try {
-    let { data, error } = await supabase
-      .from('meta-cache')
-      .select('*')
-      .eq('url', url);
-
-    if (error) {
-      console.log(error);
-      return null;
-    }
-
-    if (data) {
-      return data[0] as unknown as APIOutput;
-    }
-
-    return null;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
-
-const createCache = async (data: CacheRecord): Promise<boolean> => {
-  try {
-    const { error } = await supabase.from('meta-cache').insert(data);
-    console.log(error);
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
 
 const sendResponse = (res: Response, output: APIOutput | null) => {
   if (!output) {
