@@ -1,5 +1,5 @@
 interface Image {
-  src: string;
+  url: string;
 }
 
 export interface APIOutput {
