@@ -31,6 +31,12 @@ app.use(express.static('public'));
 
 app.get('/', async (req, res) => {
   const url = req.query.url as unknown as string;
+  if (!url) {
+    return res
+      .set('Access-Control-Allow-Origin', '*')
+      .status(400)
+      .json({ error: 'Invalid URL' });
+  }
   const metadata = await getMetadata(url);
   return res
     .set('Access-Control-Allow-Origin', '*')
@@ -48,22 +54,22 @@ app.get('/v2', async (req, res) => {
         .status(400)
         .json({ error: 'Invalid URL' });
     }
-
     url = url.indexOf('://') === -1 ? 'http://' + url : url;
 
     const isUrlValid =
       /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi.test(
         url
       );
-
-    if (!url || !isUrlValid) {
-      return res
+      
+      if (!url || !isUrlValid) {
+        return res
         .set('Access-Control-Allow-Origin', '*')
         .status(400)
         .json({ error: 'Invalid URL' });
-    }
-
-    if (url && isUrlValid) {
+      }
+      
+      if (url && isUrlValid) {
+      const isPDF = url.match(/\.(pdf)$/) != null;
       const { hostname } = new URL(url);
 
       let output: APIOutput;
@@ -79,11 +85,12 @@ app.get('/v2', async (req, res) => {
       }
 
       const metadata = await getMetadata(url);
+      
       if (!metadata) {
         return sendResponse(res, null);
       }
       const { images, og, meta } = metadata!;
-
+      
       let image = og.image
         ? og.image
         : images.length > 0
@@ -94,7 +101,12 @@ app.get('/v2', async (req, res) => {
         : meta.description
         ? meta.description
         : null;
-      const title = (og.title ? og.title : meta.title) || '';
+      let title = (og.title ? og.title : meta.title) || '';
+      if (isPDF && !title) {
+        const split = url.split('/');
+        title = split[split.length - 1];
+      }
+      
       const siteName = og.site_name || '';
 
       output = {
